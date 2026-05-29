@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{TITLE}}</title>
+<style>
+  :root {
+    --primary: #1a56db;
+    --primary-light: #e8effc;
+    --success: #059669;
+    --success-light: #d1fae5;
+    --warning: #d97706;
+    --warning-light: #fef3c7;
+    --danger: #dc2626;
+    --danger-light: #fee2e2;
+    --gray-50: #f9fafb;
+    --gray-100: #f3f4f6;
+    --gray-200: #e5e7eb;
+    --gray-300: #d1d5db;
+    --gray-500: #6b7280;
+    --gray-700: #374151;
+    --gray-900: #111827;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    line-height: 1.7;
+    color: var(--gray-900);
+    background: var(--gray-50);
+    padding: 2rem;
+  }
+
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    overflow: hidden;
+  }
+
+  /* Header */
+  .report-header {
+    background: linear-gradient(135deg, #1e3a5f 0%, #2d5a87 100%);
+    color: white;
+    padding: 2.5rem 3rem;
+  }
+  .report-header h1 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+  .report-header .subtitle {
+    font-size: 1rem;
+    opacity: 0.85;
+  }
+  .report-header .meta {
+    margin-top: 1rem;
+    display: flex;
+    gap: 2rem;
+    font-size: 0.9rem;
+    opacity: 0.8;
+  }
+
+  /* Content */
+  .content { padding: 2rem 3rem 3rem; }
+
+  /* Sections */
+  .section {
+    margin-bottom: 2.5rem;
+    page-break-inside: avoid;
+  }
+  .section-title {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--primary);
+    border-bottom: 3px solid var(--primary);
+    padding-bottom: 0.5rem;
+    margin-bottom: 1.2rem;
+  }
+  .subsection-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--gray-700);
+    margin: 1.5rem 0 0.8rem;
+    padding-left: 0.75rem;
+    border-left: 4px solid var(--primary);
+  }
+
+  /* Tables */
+  .table-wrapper {
+    overflow-x: auto;
+    margin: 1rem 0;
+    border-radius: 8px;
+    border: 1px solid var(--gray-200);
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+  }
+  thead {
+    background: var(--gray-100);
+  }
+  th {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    font-weight: 600;
+    color: var(--gray-700);
+    border-bottom: 2px solid var(--gray-200);
+    white-space: nowrap;
+  }
+  td {
+    padding: 0.65rem 1rem;
+    border-bottom: 1px solid var(--gray-100);
+    white-space: nowrap;
+  }
+  tr:hover { background: var(--gray-50); }
+  .text-right { text-align: right; }
+  .text-center { text-align: center; }
+
+  /* Badges */
+  .badge {
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    border-radius: 9999px;
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+  .badge-success { background: var(--success-light); color: var(--success); }
+  .badge-warning { background: var(--warning-light); color: var(--warning); }
+  .badge-danger { background: var(--danger-light); color: var(--danger); }
+  .badge-info { background: var(--primary-light); color: var(--primary); }
+
+  /* Cards */
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin: 1rem 0;
+  }
+  .card {
+    background: var(--gray-50);
+    border: 1px solid var(--gray-200);
+    border-radius: 8px;
+    padding: 1rem 1.2rem;
+  }
+  .card .label {
+    font-size: 0.8rem;
+    color: var(--gray-500);
+    margin-bottom: 0.3rem;
+  }
+  .card .value {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--gray-900);
+  }
+  .card .change {
+    font-size: 0.8rem;
+    margin-top: 0.2rem;
+  }
+
+  /* Verdict boxes */
+  .verdict {
+    border-radius: 8px;
+    padding: 1.2rem 1.5rem;
+    margin: 1rem 0;
+    border-left: 4px solid;
+  }
+  .verdict-buy {
+    background: var(--success-light);
+    border-color: var(--success);
+  }
+  .verdict-cautious {
+    background: var(--warning-light);
+    border-color: var(--warning);
+  }
+  .verdict-avoid {
+    background: var(--danger-light);
+    border-color: var(--danger);
+  }
+  .verdict-title {
+    font-weight: 700;
+    font-size: 1rem;
+    margin-bottom: 0.3rem;
+  }
+
+  /* Moat rating */
+  .moat-stars {
+    color: #f59e0b;
+    font-size: 1.1rem;
+    letter-spacing: 2px;
+  }
+
+  /* Comparison table highlight */
+  .highlight-row { background: var(--primary-light) !important; }
+  .best-value { color: var(--success); font-weight: 700; }
+
+  /* Buy/Sell tiers */
+  .tier-table .tier-label {
+    font-weight: 600;
+    color: var(--primary);
+  }
+
+  /* Disclaimer */
+  .disclaimer {
+    background: var(--gray-100);
+    border-radius: 8px;
+    padding: 1.2rem 1.5rem;
+    font-size: 0.82rem;
+    color: var(--gray-500);
+    margin-top: 2rem;
+  }
+
+  /* Footer */
+  .report-footer {
+    text-align: center;
+    padding: 1.5rem;
+    font-size: 0.8rem;
+    color: var(--gray-500);
+    border-top: 1px solid var(--gray-200);
+  }
+
+  /* Print styles */
+  @media print {
+    body { padding: 0; background: white; }
+    .container { box-shadow: none; }
+    .section { page-break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Header -->
+  <div class="report-header">
+    <h1>{{COMPANY_NAME}}（{{STOCK_CODE}}）投资价值分析报告</h1>
+    <div class="subtitle">基于格雷厄姆、施洛斯、巴菲特&芒格、林奇四大投资框架</div>
+    <div class="meta">
+      <span>分析日期：{{DATE}}</span>
+      <span>股价：{{CURRENT_PRICE}}</span>
+      <span>市值：{{MARKET_CAP}}</span>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- Section 0: Prior Report Changes (conditional) -->
+    {{PRIOR_REPORT_CHANGES}}
+
+    <!-- Section 1: Company Overview -->
+    <div class="section">
+      <h2 class="section-title">一、公司概况</h2>
+      <div class="card-grid">
+        {{OVERVIEW_CARDS}}
+      </div>
+    </div>
+
+    <!-- Section 2: Key Financial Data -->
+    <div class="section">
+      <h2 class="section-title">二、核心财务数据</h2>
+
+      <h3 class="subsection-title">利润表</h3>
+      <div class="table-wrapper">
+        {{INCOME_TABLE}}
+      </div>
+
+      <h3 class="subsection-title">资产负债表</h3>
+      <div class="table-wrapper">
+        {{BALANCE_TABLE}}
+      </div>
+
+      <h3 class="subsection-title">运营指标</h3>
+      <div class="table-wrapper">
+        {{OPERATING_TABLE}}
+      </div>
+
+      <h3 class="subsection-title">股东回报</h3>
+      <div class="table-wrapper">
+        {{SHAREHOLDER_RETURN_TABLE}}
+      </div>
+
+      <h3 class="subsection-title">最新季度数据</h3>
+      <div class="table-wrapper">
+        {{QUARTERLY_TABLE}}
+      </div>
+    </div>
+
+    <!-- Section 3: Earnings Report Insights -->
+    <div class="section">
+      <h2 class="section-title">三、财报定性分析</h2>
+      <div class="verdict verdict-cautious">
+        <div class="verdict-title">管理层战略与展望</div>
+        <p>{{MANAGEMENT_OUTLOOK}}</p>
+      </div>
+      <div class="table-wrapper">
+        {{EARNINGS_INSIGHTS_TABLE}}
+      </div>
+      {{ABNORMAL_SIGNALS}}
+    </div>
+
+    <!-- Section 4: Valuation Snapshot -->
+    <div class="section">
+      <h2 class="section-title">四、估值指标速览</h2>
+      <div class="card-grid">
+        {{VALUATION_CARDS}}
+      </div>
+      <div class="table-wrapper">
+        {{VALUATION_CONTEXT_TABLE}}
+      </div>
+    </div>
+
+    <!-- Section 4: Three-Framework Analysis -->
+    <div class="section">
+      <h2 class="section-title">五、四大投资框架分析</h2>
+
+      <!-- 4.1 Graham -->
+      <h3 class="subsection-title">5.1 格雷厄姆框架（Benjamin Graham）</h3>
+      <p><strong>核心原则：</strong>以显著低于内在价值的价格买入，强调安全边际、资产保障和低估值。</p>
+
+      <h4 style="margin: 1rem 0 0.5rem; font-weight: 600;">格雷厄姆数（Graham Number）</h4>
+      <div class="table-wrapper">
+        {{GRAHAM_NUMBER_TABLE}}
+      </div>
+
+      <h4 style="margin: 1rem 0 0.5rem; font-weight: 600;">七项标准检验</h4>
+      <div class="table-wrapper">
+        {{GRAHAM_STANDARDS_TABLE}}
+      </div>
+
+      <div class="verdict {{GRAHAM_VERDICT_CLASS}}">
+        <div class="verdict-title">格雷厄姆框架结论：{{GRAHAM_VERDICT}}</div>
+        <p>{{GRAHAM_VERDICT_DETAIL}}</p>
+      </div>
+
+      <!-- 4.2 Schloss -->
+      <h3 class="subsection-title">5.2 施洛斯框架（Walter Schloss）</h3>
+      <p><strong>核心原则：</strong>以低于净有形资产的价格买入分散化的股票组合，长期持有，追求均值回归。</p>
+
+      <h4 style="margin: 1rem 0 0.5rem; font-weight: 600;">选股标准检验</h4>
+      <div class="table-wrapper">
+        {{SCHLOSS_CRITERIA_TABLE}}
+      </div>
+
+      <div class="verdict {{SCHLOSS_VERDICT_CLASS}}">
+        <div class="verdict-title">施洛斯框架结论：{{SCHLOSS_VERDICT}}</div>
+        <p>{{SCHLOSS_VERDICT_DETAIL}}</p>
+      </div>
+
+      <!-- 4.3 Buffett & Munger -->
+      <h3 class="subsection-title">5.3 巴菲特&芒格框架（Buffett & Munger）</h3>
+      <p><strong>核心原则：</strong>护城河 + 管理层 + 合理价格 + 长期持有。以合理价格买入伟大公司。</p>
+
+      <h4 style="margin: 1rem 0 0.5rem; font-weight: 600;">护城河分析</h4>
+      <div class="table-wrapper">
+        {{MOAT_TABLE}}
+      </div>
+
+      <h4 style="margin: 1rem 0 0.5rem; font-weight: 600;">DCF估值（三场景）</h4>
+      <div class="table-wrapper">
+        {{DCF_TABLE}}
+      </div>
+
+      <h4 style="margin: 1rem 0 0.5rem; font-weight: 600;">芒格反向思考</h4>
+      <div class="verdict verdict-cautious">
+        <div class="verdict-title">什么情况下会变成一笔糟糕的投资？</div>
+        <p>{{INVERSION_ANALYSIS}}</p>
+      </div>
+
+      <div class="verdict {{BUFFETT_VERDICT_CLASS}}">
+        <div class="verdict-title">巴菲特&芒格框架结论：{{BUFFETT_VERDICT}}</div>
+        <p>{{BUFFETT_VERDICT_DETAIL}}</p>
+      </div>
+
+      <!-- 4.4 Lynch -->
+      <h3 class="subsection-title">5.4 林奇框架（Peter Lynch）</h3>
+      <p><strong>核心原则：</strong>买你懂的东西。用PEG找到增长合理价格的股票。先分类，再估值。</p>
+
+      <h4 style="margin: 1rem 0 0.5rem; font-weight: 600;">公司分类</h4>
+      <div class="card-grid">
+        {{LYNCH_CATEGORY_CARDS}}
+      </div>
+
+      <h4 style="margin: 1rem 0 0.5rem; font-weight: 600;">PEG比率分析</h4>
+      <div class="table-wrapper">
+        {{LYNCH_PEG_TABLE}}
+      </div>
+
+      <h4 style="margin: 1rem 0 0.5rem; font-weight: 600;">林奇七项检验</h4>
+      <div class="table-wrapper">
+        {{LYNCH_CHECKS_TABLE}}
+      </div>
+
+      <h4 style="margin: 1rem 0 0.5rem; font-weight: 600;">增长型DCF估值</h4>
+      <div class="table-wrapper">
+        {{LYNCH_DCF_TABLE}}
+      </div>
+
+      <div class="verdict {{LYNCH_VERDICT_CLASS}}">
+        <div class="verdict-title">林奇框架结论：{{LYNCH_VERDICT}}</div>
+        <p>{{LYNCH_VERDICT_DETAIL}}</p>
+      </div>
+    </div>
+
+    <!-- Section 6: Technical Analysis -->
+    <div class="section">
+      <h2 class="section-title">六、技术面分析</h2>
+      <p>以下技术面分析用于辅助判断基本面信号的入场/出场时机，不构成独立的投资建议。</p>
+
+      <h3 class="subsection-title">趋势与均线</h3>
+      <div class="table-wrapper">
+        {{TECHNICAL_TREND_TABLE}}
+      </div>
+
+      <h3 class="subsection-title">支撑与阻力位</h3>
+      <div class="table-wrapper">
+        {{TECHNICAL_LEVELS_TABLE}}
+      </div>
+
+      <h3 class="subsection-title">量价关系</h3>
+      <div class="table-wrapper">
+        {{TECHNICAL_VOLUME_TABLE}}
+      </div>
+
+      <div class="verdict {{TECHNICAL_VERDICT_CLASS}}">
+        <div class="verdict-title">技术面综合判断：{{TECHNICAL_VERDICT}}</div>
+        <p>{{TECHNICAL_VERDICT_DETAIL}}</p>
+      </div>
+    </div>
+
+    <!-- Section 7: Synthesis -->
+    <div class="section">
+      <h2 class="section-title">七、综合结论</h2>
+
+      <h3 class="subsection-title">三大框架横向对比</h3>
+      <div class="table-wrapper">
+        {{FRAMEWORK_COMPARISON_TABLE}}
+      </div>
+
+      <h3 class="subsection-title">买入建议</h3>
+      <div class="table-wrapper tier-table">
+        {{BUY_TIERS_TABLE}}
+      </div>
+
+      <h3 class="subsection-title">卖出建议</h3>
+      <div class="table-wrapper tier-table">
+        {{SELL_TIERS_TABLE}}
+      </div>
+
+      <h3 class="subsection-title">强制卖出信号</h3>
+      <div class="verdict verdict-avoid">
+        <div class="verdict-title">黄色警告（减仓50%）</div>
+        <p>{{YELLOW_SIGNALS}}</p>
+      </div>
+      <div class="verdict verdict-avoid">
+        <div class="verdict-title">红色警报（清仓至10%）</div>
+        <p>{{RED_SIGNALS}}</p>
+      </div>
+    </div>
+
+    <!-- Section 8: Peer Comparison (conditional) -->
+    {{PEER_COMPARISON_SECTION}}
+
+    <!-- Section 9: Prior Report History (conditional) -->
+    {{PRIOR_REPORT_HISTORY}}
+
+    <!-- Disclaimer -->
+    <div class="disclaimer">
+      <strong>免责声明：</strong>本报告基于公开信息自动生成，仅供参考，不构成任何投资建议。投资有风险，入市需谨慎。报告中的估值计算基于特定假设，实际情况可能与假设存在重大差异。请在做出投资决策前咨询专业财务顾问。数据来源：{{DATA_SOURCES}}。
+    </div>
+
+  </div>
+
+  <div class="report-footer">
+    由 Stock Analysis Skill 自动生成 | {{DATE}}
+  </div>
+
+</div>
+</body>
+</html>

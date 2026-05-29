@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "filing-downloader": {
+      "command": "/path/to/claude-stock-tools/mcp/.venv/bin/python",
+      "args": ["-m", "filing_downloader.server"],
+      "cwd": "/path/to/claude-stock-tools/mcp"
+    }
+  }
+}
