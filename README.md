@@ -13,6 +13,8 @@ Generates comprehensive investment analysis reports using four frameworks:
 
 Supports Hong Kong stocks and A-shares. Outputs self-contained HTML reports in Chinese.
 
+**Multi-year analysis**: Automatically downloads the latest 3 years of annual reports for detailed year-over-year comparison. Older data uses the 5-year summary from the latest report.
+
 ### filing-downloader MCP server
 Direct access to stock exchange filings:
 - **HKEX** (Hong Kong Stock Exchange) — annual/interim reports

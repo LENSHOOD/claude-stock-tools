@@ -30,13 +30,16 @@ Arguments: `<stock_code>` (required), optional flags for comparison mode.
    - `{stock_code}` = stock code with suffix (e.g., `00700.HK`, `600519.SH`)
 
 2. **If `financials.json` exists**, read it and extract:
-   - Which annual periods (FY20XX) are already stored
+   - Which annual periods (FY20XX) are already stored (need 3 most recent)
    - Which quarterly periods (Q1-Q4_XXXX) are already stored
    - List of previously detected data revisions
+   - Count of PDF reports already downloaded
 
 3. **Identify data gaps**: Determine which periods need to be fetched vs. already available
+   - Need 3 years of detailed financials from separate annual reports
    - Always check the latest annual report (e.g., if 2026, check FY2025)
    - Always check the latest quarterly report (e.g., Q1 2026)
+   - If `financials.json` has < 3 years of detailed data, download additional annual reports
    - Only skip fetching for periods already in `financials.json` (but still verify they haven't been revised)
 
 4. **If no `financials.json` exists**, proceed with full data collection (Phase 1)
@@ -44,6 +47,11 @@ Arguments: `<stock_code>` (required), optional flags for comparison mode.
 ### Phase 1: Data Collection
 
 **CRITICAL: Always fetch the LATEST available data. If the current year is 2026, FY2025 annual report should be available. If Q1 2026 quarterly report exists, include it.**
+
+**Multi-year reporting**: Download the **latest 3 years** of annual reports for detailed year-over-year comparison. The latest report's 5-year summary covers older periods. This enables:
+- Full P&L, balance sheet, cash flow comparison across 3 years
+- Trend analysis of margins, turnover, and capital structure
+- Detection of data revisions between report versions
 
 **Source priority — ALWAYS start from primary/first-hand sources, then fall back to aggregators:**
 
@@ -54,22 +62,32 @@ Arguments: `<stock_code>` (required), optional flags for comparison mode.
 **For HK stocks** (e.g., 0700.HK, 02313.HK):
 ```
 Step 1: hkex_search_filings(stock_code="02313", category="annual", lang="zh")
-Step 2: hkex_download_filing(file_link=<from step 1>, output_dir=<stock_dir>, extract_text_flag=True)
+Step 2: From the results, identify the LATEST 3 annual reports by date/title
+Step 3: Download each PDF:
+        hkex_download_filing(file_link=<latest_report>, output_dir=<stock_dir>, extract_text_flag=True)
+        hkex_download_filing(file_link=<2nd_latest>, output_dir=<stock_dir>, extract_text_flag=True)
+        hkex_download_filing(file_link=<3rd_latest>, output_dir=<stock_dir>, extract_text_flag=True)
 ```
 
 **For A-shares** (e.g., 600519.SH, 000858.SZ):
 ```
 Step 1: cninfo_search_filings(stock_code="600519", market="sh", category="annual")
-Step 2: cninfo_download_filing(adjunct_url=<from step 1>, output_dir=<stock_dir>, extract_text_flag=True)
+Step 2: From the results, identify the LATEST 3 annual reports
+Step 3: Download each PDF:
+        cninfo_download_filing(adjunct_url=<latest_report>, output_dir=<stock_dir>, extract_text_flag=True)
+        cninfo_download_filing(adjunct_url=<2nd_latest>, output_dir=<stock_dir>, extract_text_flag=True)
+        cninfo_download_filing(adjunct_url=<3rd_latest>, output_dir=<stock_dir>, extract_text_flag=True)
 ```
 
-**What to extract from filings:**
+**What to extract from EACH year's report:**
 - Revenue, gross profit, operating profit, net profit
 - EPS (basic and diluted), dividends per share
 - Total assets, total liabilities, shareholders equity
 - Cash and equivalents, total debt
 - Operating metrics (segment data, geographic breakdown)
 - Management discussion and strategic direction
+
+**Older data (beyond 3 years)**: Use the 5-year financial summary found in the latest annual report (typically near the start, pages 18-22). Do NOT download reports older than 3 years.
 
 **MCP error handling**: If the MCP tool returns an error (server not running, network issue), fall back to Tier 2 sources. Do NOT block the analysis — continue with available data.
 
@@ -117,9 +135,10 @@ Step 2: cninfo_download_filing(adjunct_url=<from step 1>, output_dir=<stock_dir>
 **Data Quality Checklist** (must have before proceeding):
 - [ ] Current stock price and market cap
 - [ ] P/E, P/B ratios
-- [ ] At least 2 years of revenue and net profit
+- [ ] 3 years of detailed financials from separate annual reports (P&L, balance sheet, cash flow)
+- [ ] 5-year summary from latest report (for periods beyond the 3 downloaded reports)
 - [ ] Total assets, total liabilities, shareholders equity (latest)
-- [ ] EPS (at least latest year)
+- [ ] EPS for all 3 years
 - [ ] Shares outstanding
 
 ### Phase 1.5: Persist Financial Data
