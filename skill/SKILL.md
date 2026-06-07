@@ -212,7 +212,7 @@ Since financial reports are already fetched for quantitative analysis, extract q
 Graham Number = sqrt(22.5 * EPS * BVPS)
 ```
 - Use Non-IFRS/adjusted EPS if available (better reflects sustainable earnings)
-- Convert to HKD if financials are in RMB (use rate ~1.10)
+- If financials are in a different currency from the stock price, convert using the current exchange rate (see "Currency Handling" section). Do NOT hardcode rates.
 
 **Seven Standard Tests:**
 
@@ -492,6 +492,46 @@ Compare the current stock with 3-5 comparable companies in the same industry. Th
 - **HTML Template**: [report_template.html](./templates/report_template.html) — Report styling
 - **HTML Generator**: [generate_html.py](./scripts/generate_html.py) — Python script to generate HTML from data
 
+## Currency Handling (货币换算)
+
+**CRITICAL: When financial report data and stock market data are in different currencies, you MUST look up the correct exchange rate and apply it consistently throughout the report.**
+
+### Step 1: Identify Currencies
+
+Before any analysis, determine:
+1. **Financial statement currency** — Check the annual report. HK-listed companies may report in USD, RMB, or HKD. Look for "currency" or "列报货币" in the financial statements header.
+2. **Stock price currency** — HK stocks trade in HKD. A-shares trade in RMB.
+3. **Are they the same?** If yes, no conversion needed. If no, proceed to Step 2.
+
+**Common scenarios:**
+| Stock | Financial Currency | Price Currency | Conversion Needed |
+|-------|-------------------|----------------|-------------------|
+| 00700.HK (腾讯) | RMB | HKD | Yes (RMB → HKD) |
+| 00316.HK (东方海外) | USD | HKD | Yes (USD → HKD) |
+| 600519.SH (茅台) | RMB | RMB | No |
+
+### Step 2: Look Up Current Exchange Rate
+
+**Do NOT hardcode or guess exchange rates.** Use WebSearch to find the current rate:
+- Search: `"USD to HKD"` or `"RMB to HKD"` or `"USD to RMB"`
+- Verify from 2+ sources if possible (Google Finance, XE.com, etc.)
+- Record the rate and its source in `financials.json`
+
+### Step 3: Apply Consistently
+
+Once you have the correct rate:
+1. **Record it** in `financials.json` as `exchange_rate` with source
+2. **Apply uniformly** to ALL conversions — Graham Number, DCF, narrative text, tables
+3. **Label every converted figure** with both currencies, e.g., "US$32.03 (HK$249.2)"
+4. **Never mix rates** — use the same rate for the entire report
+
+### Step 4: Verify
+
+After generating the report, double-check:
+- All HKD values in tables = USD/RMB values × correct rate
+- Narrative text mentions of converted values match the tables
+- The exchange rate used is documented in the report or `financials.json`
+
 ## Quality Standards
 
 - **Annual/quarterly financials must come from primary sources first** (filing-downloader MCP → HKEX/CNINFO filings → company IR website). Only fall back to financial aggregators (TradingView, Google Finance) for real-time price and derived metrics.
@@ -500,7 +540,7 @@ Compare the current stock with 3-5 comparable companies in the same industry. Th
 - Use Non-IFRS/adjusted earnings for valuation when available (better for Chinese tech companies)
 - Always include the latest available quarterly data
 - DCF must use 3 scenarios (optimistic, zero-growth, pessimistic)
-- Graham Number must use consistent currency (convert RMB to HKD at ~1.10 if needed)
+- **Graham Number must use consistent currency** — look up the current exchange rate if financials and stock price are in different currencies (see "Currency Handling" section above). Never hardcode exchange rates.
 - Investment portfolio value should be analyzed separately for companies with significant holdings
 - Report must be in Chinese
 - HTML must be self-contained (inline CSS, no external dependencies)
