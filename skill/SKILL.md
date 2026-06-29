@@ -271,17 +271,34 @@ Graham Number = sqrt(22.5 * EPS * BVPS)
 - Strategic vision and execution
 - Alignment with shareholders
 
-**DCF Valuation (3 scenarios):**
+**DCF Valuation (6 scenarios — 3 standard + 3 adjusted):**
 
 Using formula: `Intrinsic Value = PV(future earnings) + PV(terminal value)`
 - Discount rate: 10%
-- Perpetual growth: 3%
+- Terminal perpetual growth: 3%
+
+**Standard scenarios** (baseline, use as universal reference):
 
 | Scenario | Growth Rate | Period | Intrinsic Value |
 |----------|-------------|--------|-----------------|
 | Optimistic | 12% | 10 years | |
 | Zero Growth | 0% | perpetual | |
 | Pessimistic | -3% | 10 years | |
+
+**Adjusted scenarios** (dynamic, based on stock-specific factors):
+
+Adjust growth rates based on the company's Lynch category, industry cycle position, recent earnings trend, and market conditions. Examples:
+- Mature industry / slow grower (e.g., cement, utilities): Optimistic +3~5%, Pessimistic -5~8%
+- Cyclical near trough: Optimistic +5~8%, Pessimistic -8~15%
+- High-growth tech: Optimistic +20~30%, Pessimistic +3~5%
+
+| Scenario | Growth Rate | Period | Rationale |
+|----------|-------------|--------|-----------|
+| Adjusted Optimistic | *(dynamic)* | 10 years | Based on company-specific growth potential |
+| Adjusted Zero | 0% | perpetual | Unchanged |
+| Adjusted Pessimistic | *(dynamic)* | 10 years | Based on industry/market downside risk |
+
+In the report output, label the standard scenarios as "标准DCF" and adjusted scenarios as "修正DCF". Include both sets in the DCF table so readers can compare universal baseline with stock-specific estimates.
 
 **Safety Margin** = (Intrinsic Value - Current Price) / Intrinsic Value
 
