@@ -301,6 +301,23 @@ def generate_report(data, template_path):
     else:
         replacements['{{DCF_TABLE}}'] = '<p>数据待补充</p>'
 
+    if buffett.get('pr_table'):
+        replacements['{{PR_TABLE}}'] = make_table(
+            buffett['pr_table']['headers'],
+            buffett['pr_table']['rows']
+        )
+    else:
+        replacements['{{PR_TABLE}}'] = '<p>数据待补充</p>'
+
+    if buffett.get('pr_verdict'):
+        pr_type = buffett.get('pr_verdict_type', 'buy')
+        replacements['{{PR_VERDICT}}'] = f'<div class="verdict verdict-{pr_type}"><div class="verdict-title">市赚率评价</div><p>{buffett["pr_verdict"]}</p></div>'
+    else:
+        replacements['{{PR_VERDICT}}'] = ''
+
+    replacements['{{PR_VALUE}}'] = buffett.get('pr_value', '待计算')
+    replacements['{{PR_INTERPRETATION}}'] = buffett.get('pr_interpretation', '')
+
     replacements['{{INVERSION_ANALYSIS}}'] = buffett.get('inversion', '待分析')
     replacements['{{BUFFETT_VERDICT_CLASS}}'] = make_verdict_class(buffett.get('verdict_type', 'cautious'))
     replacements['{{BUFFETT_VERDICT}}'] = buffett.get('verdict', '待分析')

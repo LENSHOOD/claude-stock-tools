@@ -163,6 +163,39 @@ Discount rate: 10% (Buffett's minimum required return)
 - Buffett typically requires 20-30% discount to intrinsic value
 - Wider margin for higher uncertainty
 
+**Buffett's PR Ratio (巴菲特市赚率):**
+
+PR measures "how much price you pay for how much earning power":
+```
+PR = PE / ROE
+```
+Where ROE is the percentage value (e.g., 30% → use 30, not 0.30).
+
+| PR Range | Interpretation |
+|----------|---------------|
+| < 0.4 | Deep discount (4折), strong buy |
+| 0.4 - 0.5 | Significant discount (4-5折), buy |
+| 0.5 - 0.6 | Moderate discount (5-6折), buy |
+| 0.6 - 1.0 | Slight discount (6折-平价), hold/accumulate |
+| 1.0 - 1.5 | Slightly overvalued, caution |
+| > 1.5 | Overvalued, avoid |
+
+**ROE Stability Adjustment:**
+- Use multi-year average ROE (3-5 years) if annual ROE is volatile
+- If ROE is stable (annual variation < 3pp), use latest year ROE
+
+**Shareholder Return Coefficient (股东回报系数):**
+
+| Dividend + Buyback Payout Ratio | Coefficient | Rationale |
+|----------------------------------|---------|-----------|
+| ≥ 50% | 1.0 | Generous returns, no adjustment |
+| 25% - 50% | 1.25 | Moderate returns, slight penalty |
+| ≤ 25% | 2.0 | Low returns, double the PR |
+
+```
+Adjusted PR = PR × Coefficient
+```
+
 **Inversion (Munger)**:
 - Always ask: "What could go wrong?"
 - List 3-5 specific risks that would destroy the thesis

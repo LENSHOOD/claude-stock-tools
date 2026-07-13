@@ -302,6 +302,79 @@ In the report output, label the standard scenarios as "标准DCF" and adjusted s
 
 **Safety Margin** = (Intrinsic Value - Current Price) / Intrinsic Value
 
+**Buffett's PR Ratio (巴菲特市赚率):**
+
+PR measures "how much price you pay for how much earning power." It captures the relationship between valuation (PE) and profitability (ROE).
+
+```
+PR = PE / ROE
+```
+
+Where ROE is the percentage value (e.g., 30% → use 30, not 0.30).
+
+| PR Range | Interpretation |
+|----------|---------------|
+| < 0.4 | Deep discount (4折), strong buy |
+| 0.4 - 0.5 | Significant discount (4-5折), buy |
+| 0.5 - 0.6 | Moderate discount (5-6折), buy |
+| 0.6 - 1.0 | Slight discount (6折-平价), hold/accumulate |
+| 1.0 - 1.5 | Slightly overvalued, caution |
+| > 1.5 | Overvalued, avoid |
+
+**ROE Stability Adjustment:**
+- Use multi-year average ROE (3-5 years) if annual ROE is volatile
+- If ROE is stable (annual variation < 3pp), use latest year ROE
+
+**Shareholder Return Coefficient (股东回报系数):**
+Considering dividends + buybacks, apply a coefficient to adjust PR:
+
+| Dividend + Buyback Payout Ratio | Coefficient | Rationale |
+|----------------------------------|-------------|-----------|
+| ≥ 50% | 1.0 | Generous returns, no adjustment needed |
+| 25% - 50% | 1.25 | Moderate returns, slight penalty |
+| ≤ 25% | 2.0 | Low returns, double the PR (less attractive) |
+
+```
+Adjusted PR = PR × Coefficient
+```
+
+**Buyback Data Collection (mandatory for PR calculation):**
+
+Before computing the payout ratio, you MUST check for buyback activity:
+
+1. **Check annual report** — Search for "股份回购" or "回购股份" section, typically in "重要事项" or "股份变动及股东情况" (usually pages 60-75). Extract:
+   - Buyback plan amount and share count
+   - Actual buyback shares and amount spent
+   - Purpose: 注销 (cancellation) vs 员工持股/股权激励 (employee holding)
+   - Cancellation buybacks are more valuable (reduces share count permanently)
+
+2. **Estimate buyback cost** if not explicitly stated:
+   - If shares cancelled: cost ≈ buyback shares × average price during buyback period
+   - If buyback plan specifies amount range: use midpoint as estimate
+
+3. **Calculate total shareholder return:**
+   ```
+   Total Return = Dividends + Buyback Cost
+   Payout Ratio = Total Return / Net Profit to Parent
+   ```
+
+4. **Apply buyback-adjusted metrics:**
+   - Cancellation buyback → recalculate EPS with reduced share count
+   - Show both pre-buyback and post-buyback EPS
+   - Show PE reduction from buyback
+
+**Calculation steps in the report:**
+1. Show current PE and latest ROE → base PR
+2. Show 3-5 year average ROE → conservative PR
+3. **Collect buyback data from annual report** → estimate buyback cost
+4. Show dividend + buyback payout ratio → determine coefficient
+5. Show final adjusted PR (both base and conservative)
+6. **Show buyback-adjusted EPS and PE** (for cancellation buybacks)
+7. Interpret: how much "discount" the current price represents
+8. **Show total shareholder return rate** (dividend yield + buyback yield)
+
+**Conclusion**: Strong Recommend / Recommend / Cautious / Not Recommend (integrate with overall Buffett verdict)
+
 **Inversion (Munger's "Invert, always invert"):**
 - List 3-5 scenarios that would make this a bad investment
 - Assess probability and impact of each
@@ -368,34 +441,75 @@ PEG = PE / Annual EPS Growth Rate (%)
 
 Provide basic technical analysis to help users identify better entry/exit points when fundamental analysis signals buy or sell.
 
-**Data Sources:**
-- Google Finance for price history and chart data
-- WebSearch for "{stock_code} technical analysis" or "{stock_code} 技术分析"
-- Financial sites (TradingView, Investing.com, East Money) for MA and volume data
+**CRITICAL: You MUST fetch actual K-line data before making ANY technical analysis claims. Do NOT assume or guess volume trends, moving average positions, or support/resistance levels. Every claim must be backed by real data.**
+
+**Step 1: Fetch K-line data via East Money API (mandatory)**
+
+Use Bash to call the East Money API and get the last 20-60 trading days of daily data:
+
+```bash
+# A-shares (secid=1.{code} for SH, secid=0.{code} for SZ)
+curl -s "https://push2his.eastmoney.com/api/qt/stock/kline/get?secid=1.600219&fields1=f1,f2,f3,f4,f5,f6&fields2=f51,f52,f53,f54,f55,f56,f57&klt=101&fqt=1&end=20260713&lmt=60"
+
+# HK stocks (secid=116.{code})
+curl -s "https://push2his.eastmoney.com/api/qt/stock/kline/get?secid=116.00700&fields1=f1,f2,f3,f4,f5,f6&fields2=f51,f52,f53,f54,f55,f56,f57&klt=101&fqt=1&end=20260713&lmt=60"
+```
+
+Parse the response: each kline entry is "date,open,close,high,low,volume,turnover" (volume in shares, turnover in CNY).
+
+**Step 2: Calculate indicators from actual data**
+
+Use Python to compute from the fetched data:
+
+```python
+# Moving averages (compute from close prices)
+MA5 = average of last 5 closes
+MA10 = average of last 10 closes
+MA20 = average of last 20 closes
+
+# Volume analysis
+vol_ma5 = average of last 5 days volume
+vol_ma10 = average of last 10 days volume
+volume_ratio = vol_ma5 / vol_ma10  # >1 = expanding, <1 = contracting
+
+# Trend determination
+if price < MA5 < MA10 < MA20: "空头排列"
+elif price > MA5 > MA10 > MA20: "多头排列"
+else: "混合排列"
+```
+
+**Step 3: Make claims ONLY supported by data**
+
+| What to check | How | What NOT to say without data |
+|---------------|-----|------------------------------|
+| Volume trend | Compute vol_ma5/vol_ma10 ratio | Don't say "放量" or "缩量" without calculating the ratio |
+| MA alignment | Compare MA5, MA10, MA20 values | Don't say "多头排列" or "空头排列" without computing |
+| Support/Resistance | Look at recent lows/highs in actual data | Don't invent price levels without checking |
+| Price vs MAs | Compute (price - MA)/MA percentage | Don't say "接近支撑" without quantifying |
 
 **Key Areas to Analyze:**
 
-1. **Trend Judgment**
-   - MA5, MA20, MA60 alignment (bullish/bearish/neutral)
-   - Current price relative to key moving averages
-   - Overall trend: uptrend / downtrend / consolidation
+1. **Trend Judgment** (requires actual MA calculation)
+   - MA5, MA10, MA20 alignment (bullish/bearish/neutral) — compute from data
+   - Current price relative to key moving averages — compute percentage
+   - Overall trend: uptrend / downtrend / consolidation — based on MA slopes
 
-2. **Support & Resistance Levels**
-   - Identify 2-3 key support levels (recent lows, MA support)
-   - Identify 2-3 key resistance levels (recent highs, psychological levels)
+2. **Support & Resistance Levels** (requires actual price history)
+   - Identify 2-3 key support levels from recent lows in actual data
+   - Identify 2-3 key resistance levels from recent highs in actual data
    - Current price position relative to these levels
 
-3. **Volume-Price Relationship**
-   - Recent volume trend (increasing/decreasing)
-   - Volume-price divergence signals
-   - Breakout confirmation with volume
+3. **Volume-Price Relationship** (requires actual volume data)
+   - Compute volume ratio (vol_ma5 / vol_ma10) to determine expanding/contracting
+   - Identify volume spikes relative to volume MA
+   - Check for volume-price divergence
 
 4. **Technical Verdict**
-   - If fundamental analysis → BUY: suggest optimal entry zone based on support levels
-   - If fundamental analysis → SELL: suggest optimal exit zone based on resistance levels
-   - Short-term momentum assessment
+   - If fundamental analysis → BUY: suggest optimal entry zone based on actual support levels
+   - If fundamental analysis → SELL: suggest optimal exit zone based on actual resistance levels
+   - Short-term momentum assessment based on computed indicators
 
-**Output**: A concise technical overview table + narrative interpretation. This supplements (not replaces) the fundamental buy/sell recommendations.
+**Output**: A concise technical overview table with ACTUAL computed values + narrative interpretation. Every claim must reference the data source (e.g., "MA5=4.03, 低于MA5 2.4%").
 
 ### Phase 4: Synthesis & Recommendations
 

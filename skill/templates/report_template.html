@@ -364,6 +364,13 @@
         {{DCF_TABLE}}
       </div>
 
+      <h4 style="margin: 1rem 0 0.5rem; font-weight: 600;">巴菲特市赚率（PR = PE / ROE）</h4>
+      <p style="margin-bottom:0.8rem;font-size:0.9rem;color:var(--gray-700);">市赚率（PR）是衡量"用多少价格买到多少盈利能力"的指标。PR = PE ÷ ROE（ROE取百分比数值）。PR &lt; 1 为低估，PR &gt; 1 为高估。考虑到ROE的波动性，可使用多年ROE均值进行修正。同时引入股东回报系数：股利支付率≥50%系数1.0，25%-50%系数1.25，≤25%系数2.0。</p>
+      <div class="table-wrapper">
+        {{PR_TABLE}}
+      </div>
+      {{PR_VERDICT}}
+
       <h4 style="margin: 1rem 0 0.5rem; font-weight: 600;">芒格反向思考</h4>
       <div class="verdict verdict-cautious">
         <div class="verdict-title">什么情况下会变成一笔糟糕的投资？</div>
@@ -372,7 +379,7 @@
 
       <div class="verdict {{BUFFETT_VERDICT_CLASS}}">
         <div class="verdict-title">巴菲特&芒格框架结论：{{BUFFETT_VERDICT}}</div>
-        <p>{{BUFFETT_VERDICT_DETAIL}}</p>
+        <p>{{BUFFETT_VERDICT_DETAIL}} 市赚率（PR）{{PR_VALUE}}，{{PR_INTERPRETATION}}。</p>
       </div>
 
       <!-- 4.4 Lynch -->
